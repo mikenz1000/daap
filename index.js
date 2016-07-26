@@ -10,18 +10,18 @@ function getContentType (itemType) {
 
 function getULongAt (arr, offs) {
   return (arr[offs + 0] << 56) +
-  (arr[offs + 1] << 48) +
-  (arr[offs + 2] << 34) +
-  (arr[offs + 3] << 24) +
-  (arr[offs + 4] << 16) +
-  (arr[offs + 5] << 8) +
-  arr[offs + 6] >>> 0
+      (arr[offs + 1] << 48) +
+      (arr[offs + 2] << 34) +
+      (arr[offs + 3] << 24) +
+      (arr[offs + 4] << 16) +
+      (arr[offs + 5] << 8) +
+      arr[offs + 6] >>> 0
 }
 function getUIntAt (arr, offs) {
   return (arr[offs + 0] << 24) +
-  (arr[offs + 1] << 16) +
-  (arr[offs + 2] << 8) +
-  arr[offs + 3] >>> 0
+      (arr[offs + 1] << 16) +
+      (arr[offs + 2] << 8) +
+      arr[offs + 3] >>> 0
 }
 
 function decode (buffer, fullNames) {
@@ -54,6 +54,12 @@ function decode (buffer, fullNames) {
             parsedData = data.readUInt32BE(0)
           } else if (contentType.type === 'long') {
             parsedData = data.readIntBE(0, 8)
+          } else if (contentType.type === 'byte') {
+            var dataStr = data.toString()
+            parsedData = "";
+            for(var ctr = 0; ctr < dataStr.length; ++ctr){
+              parsedData += String.fromCharCode(dataStr[ctr]);
+            }
           } else {
             parsedData = data.toString()
           }
@@ -69,7 +75,7 @@ function decode (buffer, fullNames) {
         output[outputKey] = parsedData
       }
     } else {
-      console.error('Node-DAPP: Unexpected ContentType: %s', itemType)
+      console.error('Node-DAAP: Unexpected ContentType: %s', itemType)
     }
 
     i += 8 + itemLength
@@ -79,6 +85,7 @@ function decode (buffer, fullNames) {
 
 function encode (field, value) {
   value = value.toString()
+  console.error("FIELD", field);
   var contentType = getContentType(field)
   var buf = new Buffer(field.length + value.length + 4)
 
