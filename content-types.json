@@ -91,7 +91,7 @@
   {"code": "asda", "type": "date", "name": "daap.songdateadded"},
   {"code": "asdb", "type": "int", "name": "daap.songdisabled"},
   {"code": "asdc", "type": "int", "name": "daap.songdisccount"},
-  {"code": "asdk", "type": "int", "name": "daap.songdatakind"},
+  {"code": "asdk", "type": "byte", "name": "daap.songdatakind"},
   {"code": "asdm", "type": "date", "name": "daap.songdatemodified"},
   {"code": "asdn", "type": "int", "name": "daap.songdiscnumber"},
   {"code": "asdp", "type": "date", "name": "daap.songdatepurchased"},
@@ -151,11 +151,14 @@
   {"code": "capr", "type": "version", "name": "dacp.protocolversion"},
   {"code": "caps", "type": "byte", "name": "dacp.playerstate"},
   {"code": "carp", "type": "byte", "name": "dacp.repeatstate"},
+  
+  {"code": "casa", "type": "byte", "name": "com.apple.itunes.unknown-sa"},
+  
   {"code": "cash", "type": "byte", "name": "dacp.shufflestate"},
   {"code": "casp", "type": "list", "name": "dacp.speakers"},
   {"code": "cast", "type": "int", "name": "dacp.songtime"},
   {"code": "cavc", "type": "byte", "name": "dacp.volumecontrollable"},
-  {"code": "cave", "type": "int", "name": "dacp.visualizerenabled"},
+  {"code": "cave", "type": "byte", "name": "dacp.visualizerenabled"},
   {"code": "cavs", "type": "byte", "name": "dacp.visualizer"},
   {"code": "ceJC", "type": "int", "name": "com.apple.itunes.jukebox-client-vote"},
   {"code": "ceJI", "type": "int", "name": "com.apple.itunes.jukebox-current"},
@@ -187,7 +190,7 @@
   {"code": "mdst", "type": "int", "name": "dmap.downloadstatus"},
   {"code": "meds", "type": "int", "name": "dmap.editcommandssupported"},
   {"code": "miid", "type": "int", "name": "dmap.itemid"},
-  {"code": "mikd", "type": "int", "name": "dmap.itemkind"},
+  {"code": "mikd", "type": "byte", "name": "dmap.itemkind"},
   {"code": "mimc", "type": "int", "name": "dmap.itemcount"},
   {"code": "minm", "type": "string", "name": "dmap.itemname"},
   {"code": "mlcl", "type": "list", "name": "dmap.listing"},
@@ -223,7 +226,7 @@
   {"code": "mudl", "type": "list", "name": "dmap.deletedidlisting"},
   {"code": "mupd", "type": "list", "name": "dmap.updateresponse"},
   {"code": "musr", "type": "int", "name": "dmap.serverrevision"},
-  {"code": "muty", "type": "int", "name": "dmap.updatetype"},
+  {"code": "muty", "type": "byte", "name": "dmap.updatetype"},
   {"code": "pasp", "type": "string", "name": "dpap.aspectratio"},
   {"code": "pcmt", "type": "string", "name": "dpap.imagecomments"},
   {"code": "peak", "type": "int", "name": "com.apple.itunes.photos.album-kind"},
@@ -243,4 +246,6 @@
   {"code": "prat", "type": "int", "name": "dpap.imagerating"},
   {"code": "pret", "type": "list", "name": "dpap.retryids"},
   {"code": "pwth", "type": "int", "name": "dpap.imagepixelwidth"}
+
+  
 ]
