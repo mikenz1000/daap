@@ -24,14 +24,17 @@ function getUIntAt (arr, offs) {
       arr[offs + 3] >>> 0
 }
 
-function decode (buffer, fullNames) {
+function decode (buffer, fullNames, startAt) {
   var output, itemType, itemLength, contentType, data, parsedData, outputKey
   if (!fullNames) {
     fullNames = false
   }
+  if (startAt === undefined) 
+    startAt = 8;
+
   output = {}
 
-  for (var i = 8; i < buffer.length;) {
+  for (var i = startAt; i < buffer.length;) {
     itemType = buffer.slice(i, i + 4).toString()
     outputKey = itemType.toString()
     itemLength = buffer.slice(i + 4, i + 8).readUInt32BE(0)
@@ -60,11 +63,14 @@ function decode (buffer, fullNames) {
             for(var ctr = 0; ctr < dataStr.length; ++ctr){
               parsedData += String.fromCharCode(dataStr[ctr]);
             }
+          } else if (contentType.type === 'list') {
+            parsedData = decode(data, fullNames, 0);
           } else {
-            parsedData = data.toString()
+            parsedData = data.toString();
           }
         } catch (e) {
-          console.log('error on %s', itemType)
+          console.log('error on %s', itemType);
+          console.log('itemLength: ' + itemLength);          
           console.error(e)
         }
       }
@@ -75,7 +81,7 @@ function decode (buffer, fullNames) {
         output[outputKey] = parsedData
       }
     } else {
-      console.error('Node-DAAP: Unexpected ContentType: %s', itemType)
+      console.error('Node-DAAP: Unexpected ContentType: %s', itemType);
     }
 
     i += 8 + itemLength
