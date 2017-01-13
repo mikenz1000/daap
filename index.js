@@ -32,39 +32,64 @@ function decode (buffer, fullNames, startAt) {
   if (startAt === undefined) 
     startAt = 8;
 
-  output = {}
+  output = decodeAll(buffer,startAt,fullNames);
+  
+  return output
+}
 
+function decodeAll(buffer, startAt, fullNames)
+{
+  var output = {};
   for (var i = startAt; i < buffer.length;) {
-    itemType = buffer.slice(i, i + 4).toString()
-    outputKey = itemType.toString()
-    itemLength = buffer.slice(i + 4, i + 8).readUInt32BE(0)
-    contentType = getContentType(itemType)
+    var result = decodeChunk(buffer, i, fullNames);
+    i = result.i;
+    if (result.parsedData) {
+      if (result.contentType && result.contentType.type === 'list')
+      {
+        if (!output[result.outputKey]) output[result.outputKey] = [];
+        output[result.outputKey].push(result.parsedData);
+      }
+      else
+        output[result.outputKey] = result.parsedData;
+    }
+  }
+  return output;
+}
+// returns {
+//  i:the next index to read (which can be >= buffer.length if we're done)
+//  outputKey : the output key
+//  parsedData:the parsed data
+// }
+function decodeChunk(buffer, i, fullNames)
+{
+    var itemType = buffer.slice(i, i + 4).toString()
+    var outputKey = itemType.toString()
+    var itemLength = buffer.slice(i + 4, i + 8).readUInt32BE(0)
+    var contentType = getContentType(itemType)
+    var parsedData = null;
+
     if (contentType) {
       parsedData = null
 
       if (itemLength !== 0) {
-        data = buffer.slice(i + 8, i + 8 + itemLength)
-        parsedData = null
-
+        var data = buffer.slice(i + 8, i + 8 + itemLength)
         try {
           if (contentType.type === 'byte') {
-            parsedData = data.readUInt8(0)
+            if (itemLength != 1) console.error(contentType," received ",itemLength," not 1 bytes");
+            else parsedData = data.readUInt8(0)
           } else if (contentType.type === 'date') {
             parsedData = data.readIntBE(0, 4)
           } else if (contentType.type === 'short') {
             parsedData = data.readUInt16BE(0)
           } else if (contentType.type === 'int') {
-            parsedData = data.readUInt32BE(0)
+            if (itemLength != 4) console.error(contentType," received ",itemLength," not 4 bytes");
+            else parsedData = data.readUInt32BE(0)
           } else if (contentType.type === 'long') {
             parsedData = data.readIntBE(0, 8)
-          } else if (contentType.type === 'byte') {
-            var dataStr = data.toString()
-            parsedData = "";
-            for(var ctr = 0; ctr < dataStr.length; ++ctr){
-              parsedData += String.fromCharCode(dataStr[ctr]);
-            }
+          } else if (contentType.type === 'longlong') {
+            parsedData = data.readIntBE(0, 16)
           } else if (contentType.type === 'list') {
-            parsedData = decode(data, fullNames, 0);
+            parsedData = decodeAll(data, 0, fullNames);
           } else {
             parsedData = data.toString();
           }
@@ -77,18 +102,19 @@ function decode (buffer, fullNames, startAt) {
       if (fullNames) {
         outputKey = contentType.name
       }
-      if (parsedData !== null) {
-        output[outputKey] = parsedData
-      }
     } else {
       console.error('Node-DAAP: Unexpected ContentType: %s', itemType);
     }
 
-    i += 8 + itemLength
-  }
-  return output
-}
+    i += 8 + itemLength;
 
+    return {
+      i: i,
+      parsedData: parsedData,
+      outputKey: outputKey,
+      contentType: contentType
+    }
+}
 function encode (field, value) {
   value = value.toString()
   console.error("FIELD", field);
